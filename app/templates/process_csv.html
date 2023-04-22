@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Process CSV</h1>
+
+<form method="GET" action="{% url 'process_csv' %}">
+    {% csrf_token %}
+
+    <!-- Column Mapping -->
+    <fieldset>
+        <legend>Column Mapping</legend>
+        {% for column in columns %}
+        <label for="column_map_{{ column }}">{{ column }}</label>
+        <input type="text" name="column_map_{{ column }}" value="{{ column_map.get(column, '') }}"><br>
+        {% endfor %}
+    </fieldset>
+
+    <!-- Filter Data -->
+    <fieldset>
+        <legend>Filter Data</legend>
+        <label for="filter_col">Column</label>
+        <select name="filter_col">
+            <option value=""></option>
+            {% for column in columns %}
+            <option value="{{ column }}" {% if filter_col == column %}selected{% endif %}>{{ column }}</option>
+            {% endfor %}
+        </select>
+        <br>
+
+        <label for="filter_val">Value</label>
+        <input type="text" name="filter_val" value="{{ filter_val }}"><br>
+    </fieldset>
+
+    <!-- Create New Column -->
+    <fieldset>
+        <legend>Create New Column</legend>
+        <label for="new_column_name">Name</label>
+        <input type="text" name="new_column_name" value="{{ new_column_name }}"><br>
+
+        <label for="new_column_expression">Expression</label>
+        <input type="text" name="new_column_expression" value="{{ new_column_expression }}"><br>
+    </fieldset>
+
+    <button type="submit">Submit</button>
+</form>
+
+{% if table_html %}
+<h2>Result</h2>
+{{ table_html|safe }}
+{% endif %}
+
+{% endblock %}
